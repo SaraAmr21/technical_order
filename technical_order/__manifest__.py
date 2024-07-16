@@ -4,7 +4,7 @@
     'category': '',
     'summary': 'Manage technical orders and order lines',
     'description': """This module helps manage technical orders and their associated order lines.""",
-    'depends': ['base', 'mail', 'product'],
+    'depends': ['base', 'mail', 'product', 'sale', 'account'],
     'data': [
         'security/ir.model.access.csv',
         'views/technical_order_view.xml',

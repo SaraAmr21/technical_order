@@ -13,6 +13,8 @@
                 <header>
                     <field name="status" widget="statusbar"
                            statusbar_visible="draft,approved,rejected,cancelled"/>
+                      <button name="create_so" string="Create SO"
+                            attrs="{'invisible': [('status', '!=', 'to_approve')]}" type="object"/>
                     <button name="print_report" string="Print Report" type="object" class="btn-primary"/>
                     <button name="action_reset_to_draft" string="Draft"
                             attrs="{'invisible': [ ('status', '=', 'to_approve'), ('status', '!=', 'approved'), ('status', '!=', 'rejected'), ('status', '!=', 'cancelled')]}"
