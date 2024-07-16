@@ -1,0 +1,63 @@
+<odoo>
+    <template id="report_technical_order">
+        <t t-call="web.basic_layout">
+            <t t-set="doc_ids" t-value="docids"/>
+            <t t-set="doc_model" t-value="docmodel"/>
+            <t t-set="docs" t-value="docs"/>
+            <div class="page">
+                <h2>Technical Order Report</h2>
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Order Number</th>
+                            <th>Request Name</th>
+                            <th>Requested By</th>
+                            <th>Customer</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Status</th>
+                            <th>Total</th>
+                            <th>Order Lines</th>  <!-- New column for order lines -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="docs" t-as="o">
+                            <tr>
+                                <td><span t-esc="o.sequence"/></td>
+                                <td><span t-esc="o.request_name"/></td>
+                                <td><span t-esc="o.requested_by.name"/></td>
+                                <td><span t-esc="o.customer.name"/></td>
+                                <td><span t-esc="o.start_date"/></td>
+                                <td><span t-esc="o.end_date"/></td>
+                                <td><span t-esc="o.status"/></td>
+                                <td><span t-esc="o.total"/></td>
+                                <td>  <!-- Display order lines -->
+                                    <table class="table table-condensed">
+                                        <thead>
+                                            <tr>
+                                                <th>Description</th>
+                                                <th>Quantity</th>
+                                                <th>Price</th>
+                                                <th>Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="o.order_lines" t-as="line">
+                                                <tr>
+                                                    <td><span t-esc="line.description"/></td>
+                                                    <td><span t-esc="line.quantity"/></td>
+                                                    <td><span t-esc="line.price"/></td>
+                                                    <td><span t-esc="line.total"/></td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+</odoo>

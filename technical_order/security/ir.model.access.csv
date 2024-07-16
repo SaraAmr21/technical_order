@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_technical_order_user,access.technical.order.user,model_technical_order,base.group_user,1,0,0,0
+access_technical_order_manager,access.technical.order.manager,model_technical_order,base.group_user,1,1,1,1
+access_technical_order_line_user,access.technical.order.line.user,model_technical_order_line,base.group_user,1,0,0,0
+access_technical_order_line_manager,access.technical.order.line.manager,model_technical_order_line,base.group_user,1,1,1,1
+access_rejection_reason_wizard_user,Access Rejection Reason Wizard User,model_rejection_reason_wizard,base.group_user,1,0,0,0
+access_rejection_reason_wizard_manager,Access Rejection Reason Wizard Manager,model_rejection_reason_wizard,base.group_user,1,1,1,1

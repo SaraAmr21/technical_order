@@ -1,0 +1,11 @@
+<odoo>
+    <data noupdate="1">
+        <record id="seq_technical_order" model="ir.sequence">
+            <field name="name">Technical Order</field>
+            <field name="code">technical.order</field>
+            <field name="prefix">TO</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,25 @@
+<odoo>
+    <data>
+        <record id="email_template_technical_order_approved" model="mail.template">
+            <field name="name">Technical Order Approved</field>
+            <field name="model_id" ref="model_technical_order"/>
+            <field name="subject">Technical Order Approved: ${object.sequence}</field>
+            <field name="email_from">${(user.email or '')|safe}</field>
+            <field name="email_to">${object.requested_by.email|safe}</field>
+            <field name="body_html" type="html">
+                <p>Dear Sale Manager,</p>
+                <p>The following technical order has been approved:</p>
+                <ul>
+                    <li>Order Reference: ${object.sequence}</li>
+                    <li>Requested By: ${object.requested_by.name}</li>
+                    <li>Total: ${object.total}</li>
+                </ul>
+                <p>Regards,</p>
+                <p>Your Company</p>
+            </field>
+
+        </record>
+
+        <!-- Other records and definitions -->
+    </data>
+</odoo>

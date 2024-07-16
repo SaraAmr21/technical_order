@@ -1,0 +1,100 @@
+<odoo>
+    <!-- Form View -->
+    <record id="model_technical_order" model="ir.model">
+        <field name="name">technical.order</field>
+        <field name="model">technical.order</field>
+    </record>
+
+    <record id="view_technical_order_form" model="ir.ui.view">
+        <field name="name">technical.order.form</field>
+        <field name="model">technical.order</field>
+        <field name="arch" type="xml">
+            <form string="Technical Order">
+                <header>
+                    <field name="status" widget="statusbar"
+                           statusbar_visible="draft,approved,rejected,cancelled"/>
+                    <button name="print_report" string="Print Report" type="object" class="btn-primary"/>
+                    <button name="action_reset_to_draft" string="Draft"
+                            attrs="{'invisible': [ ('status', '=', 'to_approve'), ('status', '!=', 'approved'), ('status', '!=', 'rejected'), ('status', '!=', 'cancelled')]}"
+                            type="object" class="oe_highlight"/>
+                    <button name="action_submit_for_approval" string="Submit for Approval"
+                            attrs="{'invisible': [('status', '!=', 'draft')]}" type="object" class="oe_highlight"/>
+                    <button name="action_approve" string="Approve"
+                            attrs="{'invisible': [('status', '!=', 'to_approve')]}" type="object"
+                            class="oe_highlight"/>
+                    <button name="action_reject" string="Reject"
+                            attrs="{'invisible': [('status', '!=', 'to_approve')]}" type="object"
+                            class="oe_highlight"/>
+                    <button name="action_cancel" string="Cancel"
+                            attrs="{'invisible': ['|', '|', ('status', '=', 'cancelled'), ('status','!=', 'to_approve'), ('status', '!=', 'draft')]}"
+                            type="object" class="oe_highlight"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="sequence" default_focus="1"/>
+                            <field name="request_name" required="1"/>
+                            <field name="requested_by" required="1"/>
+                            <field name="total" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="customer"/>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                            <field name="rejection_reason" attrs="{'invisible': [('status', '!=', 'rejected')]}"
+                                   readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+                <sheet>
+                    <notebook>
+                        <page string="Order Lines">
+                            <field name="order_lines">
+                                <tree editable="bottom">
+                                    <field name="product_id"/>
+                                    <field name="quantity"/>
+                                    <field name="price"/>
+                                    <field name="total"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tree View Definition -->
+    <record id="view_technical_order_tree" model="ir.ui.view">
+        <field name="name">technical.order.tree</field>
+        <field name="model">technical.order</field>
+        <field name="arch" type="xml">
+            <tree string="Technical Orders">
+                <field name="sequence"/>
+                <field name="request_name"/>
+                <field name="requested_by"/>
+                <field name="customer"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="status"/>
+                <field name="total"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="action_technical_order" model="ir.actions.act_window">
+        <field name="name">Technical Orders</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">technical.order</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{}</field>
+    </record>
+
+    <!-- Menu Item for Order Lines -->
+    <menuitem id="menu_technical_order_root" name="Store Orders" sequence="10"/>
+    <menuitem id="menu_technical_order" name="Orders" parent="menu_technical_order_root"
+              action="action_technical_order" sequence="10"/>
+
+
+</odoo>
