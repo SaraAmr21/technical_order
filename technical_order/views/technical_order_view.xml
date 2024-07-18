@@ -1,10 +1,4 @@
 <odoo>
-    <!-- Form View -->
-    <record id="model_technical_order" model="ir.model">
-        <field name="name">technical.order</field>
-        <field name="model">technical.order</field>
-    </record>
-
     <record id="view_technical_order_form" model="ir.ui.view">
         <field name="name">technical.order.form</field>
         <field name="model">technical.order</field>
@@ -13,11 +7,13 @@
                 <header>
                     <field name="status" widget="statusbar"
                            statusbar_visible="draft,approved,rejected,cancelled"/>
-                      <button name="create_so" string="Create SO"
-                            attrs="{'invisible': [('status', '!=', 'to_approve')]}" type="object"/>
+                    <button name="create_so" string="Create SO"
+                            attrs="{'invisible': [('status', '!=', 'approved')]}"
+                            type="object"/>
+
                     <button name="print_report" string="Print Report" type="object" class="btn-primary"/>
                     <button name="action_reset_to_draft" string="Draft"
-                            attrs="{'invisible': [ ('status', '=', 'to_approve'), ('status', '!=', 'approved'), ('status', '!=', 'rejected'), ('status', '!=', 'cancelled')]}"
+                            attrs="{'invisible': [('status', '=', 'to_approve'), ('status', '!=', 'approved'), ('status', '!=', 'rejected'), ('status', '!=', 'cancelled')]}"
                             type="object" class="oe_highlight"/>
                     <button name="action_submit_for_approval" string="Submit for Approval"
                             attrs="{'invisible': [('status', '!=', 'draft')]}" type="object" class="oe_highlight"/>
@@ -32,6 +28,14 @@
                             type="object" class="oe_highlight"/>
                 </header>
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_sale_orders" string="Sale Orders" type="object"
+                                class="oe_stat_button" icon="fa-list-ul"
+                                attrs="{'invisible': [('so_count', '=', 0)]}">
+                            <field name="so_count" string="Sale Orders" widget="statinfo"/>
+                        </button>
+
+                    </div>
                     <group>
                         <group>
                             <field name="sequence" default_focus="1"/>
@@ -45,6 +49,7 @@
                             <field name="end_date"/>
                             <field name="rejection_reason" attrs="{'invisible': [('status', '!=', 'rejected')]}"
                                    readonly="1"/>
+
                         </group>
                     </group>
                 </sheet>
@@ -66,7 +71,6 @@
         </field>
     </record>
 
-    <!-- Tree View Definition -->
     <record id="view_technical_order_tree" model="ir.ui.view">
         <field name="name">technical.order.tree</field>
         <field name="model">technical.order</field>
@@ -93,7 +97,6 @@
         <field name="context">{}</field>
     </record>
 
-    <!-- Menu Item for Order Lines -->
     <menuitem id="menu_technical_order_root" name="Store Orders" sequence="10"/>
     <menuitem id="menu_technical_order" name="Orders" parent="menu_technical_order_root"
               action="action_technical_order" sequence="10"/>

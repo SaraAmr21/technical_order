@@ -1,16 +1,17 @@
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import ValidationError
 
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
-    is_tech_offer = fields.Boolean(string="Has offer")
+    is_tech_offer = fields.Boolean(string="Is Technical Offer")
 
 
 class TechnicalOrder(models.Model):
     _name = "technical.order"
     _description = "Store Orders"
+    _rec_name = 'sequence'
     _inherit = ['mail.thread']
 
     sequence = fields.Char(string='Name', readonly=True, default=lambda self: _('New'))
@@ -18,6 +19,7 @@ class TechnicalOrder(models.Model):
     requested_by = fields.Many2one('res.partner', string='Requested by', required=True,
                                    default=lambda self: self.env.user.partner_id)
     sale_orders = fields.One2many('sale.order', 'technical_order_id', string='Sale Orders')
+
     status = fields.Selection([
         ('draft', 'Draft'),
         ('to_approve', 'To Approve'),
@@ -31,17 +33,34 @@ class TechnicalOrder(models.Model):
     customer = fields.Many2one('res.partner', string='Customer', required=True, domain=[('is_tech_offer', '=', True)])
     order_lines = fields.One2many('technical.order.line', 'order_id', string='Order Lines')
     total = fields.Float(string='Total', compute='_compute_total_order', store=True)
+    so_count = fields.Integer(string='Sale Order Count', compute='_compute_so_count')
 
-    @api.depends('order_lines')
-    def _compute_total_order(self):
+    def action_view_sale_orders(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'sale.order',
+            'view_type': 'tree',
+            'view_mode': 'tree',
+            'target': 'self',
+            'domain': [('id', 'in', self.sale_orders.ids)],
+            'name': 'Sale Orders',
+        }
+
+    @api.depends('sale_orders')
+    def _compute_so_count(self):
         for order in self:
-            order.total = sum(line.total for line in order.order_lines)
+            order.so_count = len(order.sale_orders)
 
     @api.model
     def create(self, vals):
         if vals.get('sequence', _('New')) == _('New'):
             vals['sequence'] = self.env['ir.sequence'].next_by_code('technical.order') or _('New')
         return super(TechnicalOrder, self).create(vals)
+
+    @api.depends('order_lines')
+    def _compute_total_order(self):
+        for order in self:
+            order.total = sum(line.total for line in order.order_lines)
 
     def action_submit_for_approval(self):
         self.write({'status': 'to_approve'})
@@ -79,22 +98,10 @@ class TechnicalOrder(models.Model):
     def print_report(self):
         return self.env.ref('technical_order.action_report_technical_order').report_action(self)
 
-    def _check_quantities(self):
-        for order in self:
-            total_requested = sum(line.quantity for line in order.order_lines)
-            total_confirmed = sum(
-                line.quantity
-                for sale_order in order.sale_orders.filtered(lambda so: so.state == 'sale')
-                for line in sale_order.order_line
-            )
-            if total_confirmed > total_requested:
-                raise ValidationError(
-                    "The total quantities of confirmed sale orders exceed"
-                    " the requested quantities in the technical order."
-                )
-
     def create_so(self):
-        self._check_quantities()
+        self.ensure_one()
+        self.sale_orders.check_quantities()
+
         sale_order_lines = []
         for line in self.order_lines:
             sale_order_line_vals = {
