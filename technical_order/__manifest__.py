@@ -6,6 +6,7 @@
     'description': """This module helps manage technical orders and their associated order lines.""",
     'depends': ['base', 'mail', 'product', 'sale', 'account'],
     'data': [
+        'security/security.xml',
         'security/ir.model.access.csv',
         'views/technical_order_view.xml',
         'data/ir_sequence_data.xml',
@@ -14,7 +15,7 @@
         'reports/report_template.xml',
         'views/tech_offer_view.xml',
         'data/email_template.xml',
-
+        'views/sale_order_view.xml'
     ],
     'demo': [],
     'installable': True,

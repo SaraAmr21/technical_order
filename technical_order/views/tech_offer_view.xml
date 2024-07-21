@@ -6,12 +6,31 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
-<!--                <xpath expr="//h1" position="inside">-->
-                    <field name="team_id" position="after">
-                        <field name="is_tech_offer"/>
-                    </field>
-<!--                </xpath>-->
+                <!--                <xpath expr="//h1" position="inside">-->
+                <field name="team_id" position="after">
+                    <field name="is_tech_offer"/>
+                </field>
+                <!--                </xpath>-->
             </field>
         </record>
     </data>
+<!--        <record id="view_technical_order" model="ir.ui.view">-->
+<!--            <field name="name">technical.order.inherit</field>-->
+<!--            <field name="model">technical.order</field>-->
+<!--            <field name="inherit_id" ref="technical_order.view_technical_order_tree"/>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <xpath expr="//field[@name='sequence']" position="before">-->
+<!--                    <header>-->
+<!--                        <div class="oe_button_box" name="button_box">-->
+<!--                            <button name="action_view_partner" string="Customers" type="object"-->
+<!--                                    class="oe_stat_button" icon="fa-list-ul"-->
+<!--                                    attrs="{'invisible': [('customer_count', '=', 0)]}">-->
+<!--                                <field name="customer_count" string="Customers" widget="statinfo"/>-->
+<!--                            </button>-->
+<!--                        </div>-->
+<!--                    </header>-->
+<!--                </xpath>-->
+<!--            </field>-->
+<!--        </record>-->
+
 </odoo>

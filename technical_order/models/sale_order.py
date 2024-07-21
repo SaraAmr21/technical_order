@@ -7,44 +7,19 @@ class SaleOrder(models.Model):
 
     technical_order_id = fields.Many2one('technical.order', string='Technical Order')
 
-    def check_quantities(self):
-        for sale_order in self:
-            if sale_order.technical_order_id:
-                total_requested = sum(line.quantity for line in sale_order.technical_order_id.order_lines)
-
-                total_confirmed_draft = sum(
-                    line.product_uom_qty
-                    for so in sale_order.technical_order_id.sale_orders.filtered(lambda so: so.state == 'draft')
-                    for line in so.order_line
-                )
-
-                total_confirmed_sale = sum(
-                    line.product_uom_qty
-                    for so in
-                    sale_order.technical_order_id.sale_orders.filtered(lambda so: so.state in ['sale', 'done'])
-                    for line in so.order_line
-                )
-
-                total_confirmed = total_confirmed_draft + total_confirmed_sale
-
-                if total_confirmed > total_requested:
-                    raise ValidationError(
-                        "The total quantities of confirmed sale orders exceed the "
-                        "requested quantities in the technical order."
-                    )
-
-                total_so_lines = sum(
-                    sum(line.product_uom_qty for line in so.order_line)
-                    for so in
-                    sale_order.technical_order_id.sale_orders.filtered(lambda so: so.state in ['sale', 'done'])
-                )
-
-                if total_so_lines > total_requested:
-                    raise ValidationError(
-                        "The total quantities of all confirmed sale orders exceed "
-                        "the requested quantities in the technical order."
-                    )
-
     def action_confirm(self):
-        self.check_quantities()
+        if self.technical_order_id:
+            for line in self.order_line:
+                line.check_quantities()
         return super(SaleOrder, self).action_confirm()
+
+
+class SaleOrderLine(models.Model):
+    _inherit = 'sale.order.line'
+
+    def check_quantities(self):
+        tech_sum = sum(
+            self.order_id.order_lines.filtered(lambda l: l.product_id == self.product_id.id).mapped('quantity'))
+        if self.product_uom_qty > tech_sum:
+            raise ValidationError(("Quantity cannot exceed %s " % tech_sum))
+        return True

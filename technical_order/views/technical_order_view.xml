@@ -78,6 +78,7 @@
         <field name="model">technical.order</field>
         <field name="arch" type="xml">
             <tree string="Technical Orders">
+
                 <field name="sequence"/>
                 <field name="request_name"/>
                 <field name="requested_by"/>
@@ -99,9 +100,13 @@
         <field name="context">{}</field>
     </record>
 
-    <menuitem id="menu_technical_order_root" name="Store Orders" sequence="10"/>
-    <menuitem id="menu_technical_order" name="Orders" parent="menu_technical_order_root"
+    <menuitem id="menu_technical_order_root" name="Wooden tools Store" sequence="10"/>
+    <menuitem id="menu_technical_order" name="Store orders" parent="menu_technical_order_root"
+              sequence="10"/>
+    <menuitem id="menu_technical_order_sec" name="Technical Orders" parent="menu_technical_order"
               action="action_technical_order" sequence="10"/>
 
+    <menuitem id="menu_technical_order_sale" name="Sale Orders" parent="menu_technical_order"
+              action="sale.action_orders" sequence="20"/>
 
 </odoo>

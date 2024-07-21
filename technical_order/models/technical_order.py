@@ -101,7 +101,6 @@ class TechnicalOrder(models.Model):
 
     def create_so(self):
         self.ensure_one()
-        self.sale_orders.check_quantities()
 
         sale_order_lines = []
         for line in self.order_lines:
@@ -140,6 +139,17 @@ class TechnicalOrderLine(models.Model):
     quantity = fields.Float(string='Quantity', default=1)
     price = fields.Float(string='Price', readonly=True, related='product_id.list_price')
     total = fields.Float(string='Total', compute='_compute_total', store=True)
+    remaining_qty = fields.Float(compute='compute_remaining_qty')
+
+    @api.depends('order_id.sale_orders')
+    def compute_remaining_qty(self):
+        for rec in self:
+            so_qty = 0
+            if rec.order_id.sale_orders:
+                so_qty = sum(
+                    rec.order_id.sale_orders.order_line.filtered(lambda l: l.product_id == rec.product_id.id).mapped(
+                        'product_uom_qty'))
+            rec.remaining_qty = rec.quantity - so_qty
 
     @api.depends('product_id')
     def _compute_description(self):
